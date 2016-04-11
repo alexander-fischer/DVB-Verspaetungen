@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary">#FFEB3B</color>
+    <color name="primary_dark">#FBC02D</color>
+    <color name="accent">#000000</color>
+    <color name="background">#FFFFFF</color>
+    <color name="textColor">#000000</color>
+    <color name="textColorPrimary">#000000</color>
+    <color name="stoerung">#FF8A80</color>
+    <color name="beendet">#B9F6CA</color>
+    <color name="neutral">#FFFFFF</color>
+    <color name="text_info_color">#9E9E9E</color>
+    <color name="secondary">#FFF9C4</color>
+    <color name="navBarColor">#000000</color>
+
+</resources>

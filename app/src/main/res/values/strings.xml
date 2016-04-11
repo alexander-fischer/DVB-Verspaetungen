@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">DVB Verspätungen</string>
+
+    <string name="action_settings">Einstellungen</string>
+    <string name="configuration_action_button">Weiter</string>
+    <string name="empty">Es lädt...</string>
+    <string name="subheadertext">Test</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="action_filter">Filter</string>
+
+</resources>

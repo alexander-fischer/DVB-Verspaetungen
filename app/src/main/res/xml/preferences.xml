@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="all_notifications"
+        android:title="Alle Benachrichtigungen">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="notifications"
+            android:summary="Aktiviere diese Einstellung um Benachrichtigungen für Verspätungen und Entwarnungsmeldungen zu erhalten. Deaktiviere sie damit die Anwendung dich nicht benachrichtigt."
+            android:title="Benachrichtigungen" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="all_lines"
+        android:title="Benachrichtigungen für Straßenbahnlinien">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie1"
+            android:title="Linie 1" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie2"
+            android:title="Linie 2" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie3"
+            android:title="Linie 3" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie4"
+            android:title="Linie 4" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie6"
+            android:title="Linie 6" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie7"
+            android:title="Linie 7" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie8"
+            android:title="Linie 8" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie9"
+            android:title="Linie 9" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie10"
+            android:title="Linie 10" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie11"
+            android:title="Linie 11" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie12"
+            android:title="Linie 12" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie13"
+            android:title="Linie 13" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie20"
+            android:title="Linie 20" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="all_lines"
+        android:title="Benachrichtigungen für Buslinien">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie61"
+            android:title="Linie 61" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie62"
+            android:title="Linie 62" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie63"
+            android:title="Linie 63" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie64"
+            android:title="Linie 64" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie65"
+            android:title="Linie 65" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie66"
+            android:title="Linie 66" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie70"
+            android:title="Linie 70" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie72"
+            android:title="Linie 72" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie74"
+            android:title="Linie 74" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie75"
+            android:title="Linie 75" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie76"
+            android:title="Linie 76" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie77"
+            android:title="Linie 77" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie79"
+            android:title="Linie 79" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie80"
+            android:title="Linie 80" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie81"
+            android:title="Linie 81" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie84"
+            android:title="Linie 84" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie85"
+            android:title="Linie 85" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie86"
+            android:title="Linie 86" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie87"
+            android:title="Linie 87" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie88"
+            android:title="Linie 88" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie89"
+            android:title="Linie 89" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie90"
+            android:title="Linie 90" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie92"
+            android:title="Linie 92" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie94"
+            android:title="Linie 94" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie95"
+            android:title="Linie 95" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie97"
+            android:title="Linie 97" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="linie99"
+            android:title="Linie 99" />
+    </PreferenceCategory>
+</PreferenceScreen>
