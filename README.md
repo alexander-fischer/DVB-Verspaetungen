@@ -4,7 +4,7 @@ The [DVB Verspätungen](https://play.google.com/store/apps/details?id=eu.alexand
 
 ## What is the app about?
 
-DVB Verspätungen is an inofficial Android application that informs you about bigger delays of trams and busses of the Dresdner Verkehrsbetriebe AG. The source of the information is the [DVB Twitter account](https://twitter.com/DVBAG).
+DVB Verspätungen is an unofficial Android application that informs you about bigger delays of trams and busses of the Dresdner Verkehrsbetriebe AG. The source of the information is the [DVB Twitter account](https://twitter.com/DVBAG).
 
 ## More information
 
