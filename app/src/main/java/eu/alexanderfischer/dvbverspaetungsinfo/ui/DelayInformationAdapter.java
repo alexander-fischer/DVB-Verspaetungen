@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import eu.alexanderfischer.dvbverspaetungsinfo.R;
-import eu.alexanderfischer.dvbverspaetungsinfo.helpers.DateHelper;
-import eu.alexanderfischer.dvbverspaetungsinfo.helpers.TextHelper;
+import eu.alexanderfischer.dvbverspaetungsinfo.helper.DateHelper;
+import eu.alexanderfischer.dvbverspaetungsinfo.helper.TextHelper;
 import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
 
 /**

@@ -1,4 +1,4 @@
-package eu.alexanderfischer.dvbverspaetungsinfo.helpers;
+package eu.alexanderfischer.dvbverspaetungsinfo.helper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

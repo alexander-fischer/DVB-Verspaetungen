@@ -8,4 +8,8 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="action_filter">Filter</string>
 
+    <!-- Stored values for Web Request -->
+    <string name="di_url">http://alexfi.dubhe.uberspace.de/text.json</string>
+    <string name="lastid_url">http://alexfi.dubhe.uberspace.de/id.txt</string>
+
 </resources>

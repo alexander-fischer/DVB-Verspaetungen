@@ -3,7 +3,6 @@ package eu.alexanderfischer.dvbverspaetungsinfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,28 +19,27 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import eu.alexanderfischer.dvbverspaetungsinfo.helpers.FileHelper;
-import eu.alexanderfischer.dvbverspaetungsinfo.helpers.JsonHelper;
+import eu.alexanderfischer.dvbverspaetungsinfo.helper.FileHelper;
+import eu.alexanderfischer.dvbverspaetungsinfo.helper.JsonHelper;
 import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
 import eu.alexanderfischer.dvbverspaetungsinfo.services.UpdateServiceManager;
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayInformationAdapter;
@@ -64,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isFilterActivated = false;
 
+    // Stores the array of DelayInformation for the Activity.
     ArrayList<DelayInformation> tweetsArray;
 
     @Override
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         setupUI();
         setupData();
 
-        startWebService();
+        startWebServices();
         UpdateServiceManager.startUpdateService(this);
     }
 
@@ -88,13 +87,6 @@ public class MainActivity extends AppCompatActivity {
         if (!hasConfiguredSettings) {
             startConfiguringSettings();
         }
-    }
-
-    /**
-     * Executes the WebService for getting the raw Twitter feed data.
-     */
-    private void startWebService() {
-        new GetTweetsWebService().execute();
     }
 
     /**
@@ -117,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new GetTweetsWebService().execute();
+                startWebServices();
             }
         });
 
@@ -164,172 +156,153 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Web service for getting the tweets from an REST API.
+     * Static Object to store the last id for passing between the two WebServices
      */
-    class GetTweetsWebService extends AsyncTask<Void, Void, Void> {
-        ArrayList<DelayInformation> tweets = new ArrayList<>();
-        ArrayList<DelayInformation> newTweets;
-
-        boolean hasFailed = false;
-        String lastId = "0";
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            String lastIdFromBackend = getLastId();
-
-            if (lastIdFromBackend.contains("\n")) {
-                lastIdFromBackend = lastIdFromBackend.replace("\n", "");
-            }
-
-            final File file = new File(getFilesDir(), TWEETS_JSON);
-            ArrayList<DelayInformation> tweetsArrayOld = FileHelper.convertTweetJsonToArray(file);
-
-            if (tweetsArrayOld.size() > 0) {
-                DelayInformation firstTweet = tweetsArrayOld.get(0);
-                lastId = firstTweet.getId();
-            }
-
-            if (!lastId.equals(lastIdFromBackend)) {
-                newTweets = getDataFromBackend(lastId);
-
-                if (newTweets.size() > 0) {
-                    for (DelayInformation tweet : newTweets) {
-                        tweets.add(tweet);
-                    }
-
-                    final File lastIdFile = new File(getFilesDir(), LASTID_JSON);
-                    ObjectMapper mapper = new ObjectMapper();
-                    try {
-                        mapper.writeValue(lastIdFile, newTweets.get(0).getId());
-                    } catch (IOException e) {
-                        Toast.makeText(getApplicationContext(), "Fehler beim Schreiben von Datei.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                if (tweets.size() <= 15) {
-                    int maxSize = 15 - tweets.size();
-
-                    if (tweets.size() + tweetsArrayOld.size() >= 15) {
-                        for (int i = 0; i < maxSize; i++) {
-                            DelayInformation tweet = tweetsArrayOld.get(i);
-                            tweets.add(tweet);
-                        }
-                    } else {
-                        for (DelayInformation tweet : tweetsArrayOld) {
-                            tweets.add(tweet);
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if (hasFailed) {
-                Toast.makeText(MainActivity.this,
-                        "Fehler beim Aktualisieren. Überprüfe deine Internetverbindung.",
-                        Toast.LENGTH_LONG).show();
-
-                swipeLayout.setRefreshing(false);
-
-                subTitle.setText("Fehler beim Aktualisieren.");
-            } else {
-                if (tweets.size() > 0) {
-
-                    tweetsArray = tweets;
-
-                    final DelayInformationAdapter adapter = new DelayInformationAdapter(MainActivity.this,
-                            R.layout.list_layout, R.id.list_layout_textview, tweets, isFilterActivated);
-                    listView.setAdapter(adapter);
-
-                    ObjectMapper mapper = new ObjectMapper();
-                    final File file = new File(getFilesDir(), TWEETS_JSON);
-                    try {
-                        mapper.writeValue(file, tweets);
-                    } catch (IOException e) {
-                        Toast.makeText(getApplicationContext(), "Fehler beim Schreiben von Datei.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                Date date = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.GERMAN);
-                subTitle.setText("Letzte Aktualisierung um " + formatter.format(date));
-            }
-
-            swipeLayout.setRefreshing(false);
-        }
-
-        /**
-         * Gets the data from the backend and converts it to an array list.
-         *
-         * @param lastId Last id of the newest DelayInformation, that is saved locally.
-         * @return list of all DelayInformation objects.
-         */
-        protected ArrayList<DelayInformation> getDataFromBackend(String lastId) {
-            HttpGet httpGet = new HttpGet("http://alexfi.dubhe.uberspace.de/text.json");
-            InputStream inputStream = null;
-            ArrayList<DelayInformation> newTweetsArray = new ArrayList<>();
-            String jsonString = "";
-
-            try {
-                DefaultHttpClient httpClient = new DefaultHttpClient(new BasicHttpParams());
-                HttpResponse response = httpClient.execute(httpGet);
-                HttpEntity entity = response.getEntity();
-
-                inputStream = entity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-
-                jsonString = sb.toString();
-                JSONArray jsonArray = new JSONArray(jsonString);
-
-                newTweetsArray = JsonHelper.jsonArrayToObjectArray(MainActivity.this, jsonArray, lastId, isFilterActivated);
-
-            } catch (JSONException | IOException e) {
-                hasFailed = true;
-            }
-
-            return newTweetsArray;
-        }
-
-        /**
-         * Get the last id from the backend.
-         * @return last id.
-         */
-        protected String getLastId() {
-            HttpGet httpGet = new HttpGet("http://alexfi.dubhe.uberspace.de/id.txt");
-            InputStream inputStream = null;
-            String lastIdFromBackend = "";
-
-            try {
-                DefaultHttpClient httpClient = new DefaultHttpClient(new BasicHttpParams());
-                HttpResponse response = httpClient.execute(httpGet);
-                HttpEntity entity = response.getEntity();
-
-                inputStream = entity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-
-                lastIdFromBackend = sb.toString();
-            } catch (IOException e) {
-                hasFailed = true;
-            }
-
-            return lastIdFromBackend;
-        }
+    static class IdObject {
+        String lastId;
     }
+
+    /**
+     * Executes the WebService for getting the last id.
+     */
+    private void startWebServices() {
+        final RequestQueue queue = Volley.newRequestQueue(this);
+
+        final String idUrl = getString(R.string.lastid_url);
+        final String dataUrl = getString(R.string.di_url);
+
+        final File file = new File(getFilesDir(), TWEETS_JSON);
+        final ArrayList<DelayInformation> localSavedDelayInformation = FileHelper.convertTweetJsonToArray(file);
+
+        final IdObject idObject = new IdObject();
+
+        // Start WebService to get the DelayInformation JSON.
+        final StringRequest getDataFromBackend = new StringRequest(Request.Method.GET, dataUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        String encodedResponse = null;
+                        try {
+                            encodedResponse = new String(response.getBytes("ISO-8859-1"), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            return;
+                        }
+                        ArrayList<DelayInformation> backendDelayInformation;
+
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(encodedResponse);
+                        } catch (JSONException e) {
+                            return;
+                        }
+
+                        backendDelayInformation = JsonHelper.jsonArrayToObjectArray(MainActivity.this, jsonArray,
+                                idObject.lastId, isFilterActivated);
+
+                        if (backendDelayInformation.size() > 0) {
+
+                            final File lastIdFile = new File(getFilesDir(), LASTID_JSON);
+                            ObjectMapper mapper = new ObjectMapper();
+                            try {
+                                mapper.writeValue(lastIdFile, backendDelayInformation.get(0).getId());
+                            } catch (IOException e) {
+                                Toast.makeText(getApplicationContext(), "Fehler beim Schreiben von Datei.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        if (backendDelayInformation.size() <= 15) {
+                            int maxSize = 15 - backendDelayInformation.size();
+
+                            if (backendDelayInformation.size() + localSavedDelayInformation.size() >= 15) {
+                                for (int i = 0; i < maxSize; i++) {
+                                    DelayInformation tweet = localSavedDelayInformation.get(i);
+                                    backendDelayInformation.add(tweet);
+                                }
+                            } else {
+                                for (DelayInformation tweet : localSavedDelayInformation) {
+                                    backendDelayInformation.add(tweet);
+                                }
+                            }
+                        } else {
+                            while (backendDelayInformation.size() > 15) {
+                                backendDelayInformation.remove(15);
+                            }
+
+                        }
+
+                        if (backendDelayInformation.size() > 0) {
+
+                            tweetsArray = backendDelayInformation;
+
+                            final DelayInformationAdapter adapter = new DelayInformationAdapter(MainActivity.this,
+                                    R.layout.list_layout, R.id.list_layout_textview, backendDelayInformation, isFilterActivated);
+                            listView.setAdapter(adapter);
+
+                            ObjectMapper mapper = new ObjectMapper();
+                            final File file = new File(getFilesDir(), TWEETS_JSON);
+                            try {
+                                mapper.writeValue(file, backendDelayInformation);
+                            } catch (IOException e) {
+                                Toast.makeText(getApplicationContext(), "Fehler beim Schreiben von Datei.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.GERMAN);
+                        subTitle.setText("Letzte Aktualisierung um " + formatter.format(date));
+
+
+                        swipeLayout.setRefreshing(false);
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Keine Internetverbindung", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // Start WebService to get the latest Id from backend.
+        StringRequest getIdFromBackend = new StringRequest(Request.Method.GET, idUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        String lastIdFromBackend = response;
+                        idObject.lastId = "";
+
+                        if (lastIdFromBackend.contains("\n")) {
+                            lastIdFromBackend = lastIdFromBackend.replace("\n", "");
+                        }
+
+                        if (localSavedDelayInformation.size() > 0) {
+                            DelayInformation firstTweet = localSavedDelayInformation.get(0);
+                            idObject.lastId = firstTweet.getId();
+                        }
+
+                        if (idObject.lastId.equals(lastIdFromBackend)) {
+                            Date date = new Date();
+                            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.GERMAN);
+                            subTitle.setText("Letzte Aktualisierung um " + formatter.format(date));
+
+                            swipeLayout.setRefreshing(false);
+                        } else {
+                            swipeLayout.setRefreshing(false);
+
+                            queue.add(getDataFromBackend);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Keine Internetverbindung", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        queue.add(getIdFromBackend);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

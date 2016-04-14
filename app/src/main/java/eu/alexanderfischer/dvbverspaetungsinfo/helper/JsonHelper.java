@@ -1,4 +1,4 @@
-package eu.alexanderfischer.dvbverspaetungsinfo.helpers;
+package eu.alexanderfischer.dvbverspaetungsinfo.helper;
 
 import android.content.Context;
 
