@@ -2,7 +2,7 @@ package eu.alexanderfischer.dvbverspaetungsinfo.ui;
 
 /**
  * Created by Alexander Fischer.
- *
+ * <p>
  * Adapter class that represents the all DelayInformation objects.
  */
 
@@ -27,10 +27,10 @@ import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
  * Implementation of an ArrayAdapter.
  */
 public class DelayInformationAdapter extends ArrayAdapter<DelayInformation> {
-    ArrayList<DelayInformation> tweetObjects;
-    int layout;
-    boolean isFilterActivated;
-    String mDayOfWeek = "";
+    private ArrayList<DelayInformation> tweetObjects;
+    private int layout;
+    private boolean isFilterActivated;
+    private String mDayOfWeek = "";
 
     public DelayInformationAdapter(Context context, int layout, int resource, ArrayList<DelayInformation> pTweetObjects, boolean isFilterActivated) {
         super(context, layout, resource, pTweetObjects);
@@ -82,6 +82,7 @@ public class DelayInformationAdapter extends ArrayAdapter<DelayInformation> {
             holder.infoText.setVisibility(View.GONE);
         }
 
+        /*
         if (!delayInformation.getDayOfWeek().equals("")) {
             String dayOfWeek = delayInformation.getDayOfWeek();
 
@@ -103,6 +104,7 @@ public class DelayInformationAdapter extends ArrayAdapter<DelayInformation> {
         } else {
             holder.dateText.setVisibility(View.GONE);
         }
+        */
 
         return view;
     }
@@ -110,7 +112,7 @@ public class DelayInformationAdapter extends ArrayAdapter<DelayInformation> {
     /**
      * For applying the ViewHolder pattern for adapters.
      */
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView text;
         TextView infoText;
         TextView dateText;

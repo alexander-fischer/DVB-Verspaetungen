@@ -18,31 +18,23 @@ import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Random;
 
 import eu.alexanderfischer.dvbverspaetungsinfo.MainActivity;
-import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
 import eu.alexanderfischer.dvbverspaetungsinfo.R;
+import eu.alexanderfischer.dvbverspaetungsinfo.helper.WebRequestUtils;
+import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
 
-/**
- * Created by alexf_000 on 30.07.2015.
- */
 public class UpdateTweetsService extends Service {
+
+    private static final String TAG = UpdateTweetsService.class.getSimpleName();
 
     private static final String LASTID_FILE = "lastid.json";
 
@@ -152,15 +144,27 @@ public class UpdateTweetsService extends Service {
 
         @Override
         protected Void doInBackground(Void... params) {
-            String lastIdFromBackend = getLastIdFromBackend();
-            if (lastIdFromBackend.contains("\n")) {
-                lastIdFromBackend = lastIdFromBackend.replace("\n", "");
-            }
+            String lastIdFromBackend = WebRequestUtils
+                    .getStringFromWebRequest("http://alexfi.dubhe.uberspace.de/id.txt");
+            if (lastIdFromBackend != null) {
+                if (lastIdFromBackend.contains("\n")) {
+                    lastIdFromBackend = lastIdFromBackend.replace("\n", "");
+                }
 
-            String lastId = getLastId();
+                String lastId = getLastId();
 
-            if (!lastId.equals(lastIdFromBackend)) {
-                tweetsArray = getDataFromBackend(lastId);
+                if (!lastId.equals(lastIdFromBackend)) {
+                    String dataFromBackend = WebRequestUtils
+                            .getStringFromWebRequest("http://alexfi.dubhe.uberspace.de/text.json");
+
+                    JSONArray jsonArray;
+                    try {
+                        jsonArray = new JSONArray(dataFromBackend);
+                        tweetsArray = jsonArrayToObjectArray(jsonArray, lastId);
+                    } catch (JSONException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
             }
 
             return null;
@@ -220,96 +224,6 @@ public class UpdateTweetsService extends Service {
         }
 
         return newTweetsArray;
-    }
-
-    protected ArrayList<DelayInformation> getDataFromBackend(String lastId) {
-        HttpGet httpGet = new HttpGet("http://alexfi.dubhe.uberspace.de/text.json");
-        InputStream inputStream = null;
-        ArrayList<DelayInformation> newTweetsArray = new ArrayList<>();
-        String jsonString = "";
-
-        try {
-            DefaultHttpClient httpClient = new DefaultHttpClient(new BasicHttpParams());
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-
-            inputStream = entity.getContent();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-
-            jsonString = sb.toString();
-            JSONArray jsonArray = new JSONArray(jsonString);
-            newTweetsArray = jsonArrayToObjectArray(jsonArray, lastId);
-
-        } catch (JSONException | IOException e) {
-            // Do nothing here
-        }
-
-        return newTweetsArray;
-    }
-
-    protected String getLastIdFromBackend() {
-        HttpGet httpGet = new HttpGet("http://alexfi.dubhe.uberspace.de/id.txt");
-        InputStream inputStream = null;
-        String lastIdFromBackend = "";
-
-        try {
-            DefaultHttpClient httpClient = new DefaultHttpClient(new BasicHttpParams());
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-
-            inputStream = entity.getContent();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-
-            lastIdFromBackend = sb.toString();
-        } catch (IOException e) {
-            // Do nothing here
-        }
-
-        return lastIdFromBackend;
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private void testNotification() {
-        Random rand = new Random();
-        int mId = rand.nextInt(10000);
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle("Hinweis")
-                        .setContentText("Test")
-                        .setAutoCancel(true);
-
-        Intent resultIntent = new Intent(this, MainActivity.class);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        mNotificationManager.notify(mId, mBuilder.build());
-
-        Log.e("Notification", "gesendet");
     }
 }
 

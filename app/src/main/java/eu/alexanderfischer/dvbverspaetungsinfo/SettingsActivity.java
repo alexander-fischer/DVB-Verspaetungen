@@ -9,11 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
 
-/**
- * Created by alexf_000 on 27.08.2015.
- */
 public class SettingsActivity extends PreferenceActivity {
 
     private AppCompatDelegate mDelegate;
@@ -38,7 +34,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         } else {
             // Back button in Toolbar
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            toolbar.setNavigationIcon(R.drawable.ic_action_arrow_left);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

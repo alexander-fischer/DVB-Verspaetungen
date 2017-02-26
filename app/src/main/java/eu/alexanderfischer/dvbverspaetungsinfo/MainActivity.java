@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeLayout;
     Toolbar toolbar;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     boolean isFilterActivated = false;
 
     // Stores the array of DelayInformation for the Activity.
@@ -69,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         startTutorial();
 
@@ -84,8 +89,16 @@ public class MainActivity extends AppCompatActivity {
      */
     private void startTutorial() {
         boolean hasConfiguredSettings = hasConfiguredSettings();
+        Bundle bundle = new Bundle();
+
         if (!hasConfiguredSettings) {
+            bundle.putString(FirebaseAnalytics.Param.CONTENT, "App opened first time");
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle);
+
             startConfiguringSettings();
+        } else {
+            bundle.putString(FirebaseAnalytics.Param.CONTENT, "App opened");
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle);
         }
     }
 
@@ -119,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final DelayInformation delayInformation = tweetsArray.get(position);
-                String sendText = "";
+                String sendText;
 
                 if (delayInformation.getInfoText().equals("")) {
                     sendText = delayInformation.getText() + " #DVBVerspätungen";
