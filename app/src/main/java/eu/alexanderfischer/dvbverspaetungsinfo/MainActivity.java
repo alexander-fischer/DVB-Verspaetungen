@@ -80,8 +80,13 @@ public class MainActivity extends AppCompatActivity {
         setupUI();
         setupData();
 
-        startWebServices();
         UpdateServiceManager.startUpdateService(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startWebServices();
     }
 
     /**
@@ -189,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
 
         final IdObject idObject = new IdObject();
 
-        // Start WebService to get the DelayInformation JSON.
         final StringRequest getDataFromBackend = new StringRequest(Request.Method.GET, dataUrl,
                 new Response.Listener<String>() {
                     @Override
@@ -202,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         ArrayList<DelayInformation> backendDelayInformation;
 
-                        JSONArray jsonArray = null;
+                        JSONArray jsonArray;
                         try {
                             jsonArray = new JSONArray(encodedResponse);
                         } catch (JSONException e) {

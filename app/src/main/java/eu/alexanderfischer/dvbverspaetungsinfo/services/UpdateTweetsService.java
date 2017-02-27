@@ -52,9 +52,7 @@ public class UpdateTweetsService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Start webservice
-        new JsonWebSrvice().execute();
-
-        //testNotification();
+        new JsonWebService().execute();
 
         stopSelf();
 
@@ -139,7 +137,7 @@ public class UpdateTweetsService extends Service {
         return lastId;
     }
 
-    class JsonWebSrvice extends AsyncTask<Void, Void, Void> {
+    class JsonWebService extends AsyncTask<Void, Void, Void> {
         ArrayList<DelayInformation> tweetsArray;
 
         @Override
@@ -212,7 +210,6 @@ public class UpdateTweetsService extends Service {
                 delayInformation.setState(jsonObject.getString("state"));
                 delayInformation.setLinien(linien);
 
-                // Abbruchkriterium, wenn die ID übereinstimmt (nur neue Tweets kommen hinzu)
                 if (delayInformation.getId().equals(lastId)) {
                     break;
                 }
