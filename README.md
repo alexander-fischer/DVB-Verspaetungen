@@ -8,6 +8,6 @@ DVB Verspätungen is an unofficial Android application that informs you about bi
 
 ## More information
 
-Current development app version: `1.2.1`
+Current development app version: `1.2.2`
 
-Released app version: `1.2`
+Released app version: `1.2.2`
