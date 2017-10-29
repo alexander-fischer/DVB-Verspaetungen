@@ -44,10 +44,6 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
-        <activity
-            android:name=".Main2Activity"
-            android:label="@string/title_activity_main2" >
-        </activity>
     </application>
 
 </manifest>

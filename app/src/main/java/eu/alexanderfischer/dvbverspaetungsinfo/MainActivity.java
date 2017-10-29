@@ -278,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), "Keine Internetverbindung", Toast.LENGTH_LONG).show();
+                swipeLayout.setRefreshing(false);
             }
         });
 
@@ -314,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), "Keine Internetverbindung", Toast.LENGTH_LONG).show();
+                swipeLayout.setRefreshing(false);
             }
         });
 

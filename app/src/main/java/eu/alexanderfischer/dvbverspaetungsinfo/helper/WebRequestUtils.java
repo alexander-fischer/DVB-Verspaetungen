@@ -26,6 +26,9 @@ public class WebRequestUtils {
         } catch (IOException e) {
             Log.d(TAG, e.getMessage());
             return null;
+        } catch (NullPointerException e) {
+            Log.d(TAG, e.getMessage());
+            return null;
         }
     }
 
