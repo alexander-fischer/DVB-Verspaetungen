@@ -24,7 +24,11 @@ public class WebRequestUtils {
             response = client.newCall(request).execute();
             return response.body().string();
         } catch (IOException e) {
-            Log.d(TAG, e.getMessage());
+            if (e != null && e.getMessage() != null) {
+                Log.d(TAG, e.getMessage());
+            } else {
+                Log.d(TAG, "IOException");
+            }
             return null;
         } catch (NullPointerException e) {
             Log.d(TAG, e.getMessage());

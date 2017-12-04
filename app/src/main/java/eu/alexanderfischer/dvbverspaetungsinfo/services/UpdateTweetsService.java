@@ -160,9 +160,9 @@ public class UpdateTweetsService extends Service {
                         jsonArray = new JSONArray(dataFromBackend);
                         tweetsArray = jsonArrayToObjectArray(jsonArray, lastId);
                     } catch (JSONException e) {
-                        Log.d(TAG, e.getMessage());
+                        Log.d(TAG, "JSONException");
                     } catch (NullPointerException e) {
-                        Log.d(TAG, e.getMessage());
+                        Log.d(TAG, "NullPointerException");
                     }
                 }
             }
