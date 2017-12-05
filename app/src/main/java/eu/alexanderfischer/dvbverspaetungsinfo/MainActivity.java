@@ -42,6 +42,7 @@ import java.util.Locale;
 import eu.alexanderfischer.dvbverspaetungsinfo.helper.FileHelper;
 import eu.alexanderfischer.dvbverspaetungsinfo.helper.JsonHelper;
 import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
+import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController;
 import eu.alexanderfischer.dvbverspaetungsinfo.services.UpdateServiceManager;
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayInformationAdapter;
 
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         startTutorial();
+
+        DelayController.INSTANCE.callBackend();
 
         setupUI();
         setupData();

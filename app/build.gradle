@@ -41,6 +41,9 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    compile "com.squareup.retrofit2:retrofit:2.3.0"
+    compile "com.squareup.retrofit2:converter-gson:2.3.0"
 }
 
 apply plugin: 'com.google.gms.google-services'
