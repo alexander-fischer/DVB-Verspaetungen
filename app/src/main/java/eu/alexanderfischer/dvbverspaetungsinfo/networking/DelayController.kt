@@ -10,8 +10,11 @@ object DelayController : Callback<List<Delay>> {
 
     private val TAG = DelayController::class.java.simpleName!!
 
-    fun callBackend() {
-        val delayCall = DelayApiService.create().getDelays()
+    /**
+     * Calls backend for delays async.
+     */
+    fun getDelays() {
+        val delayCall = DelayApiService.create().delays()
         delayCall.enqueue(this)
     }
 
@@ -20,10 +23,14 @@ object DelayController : Callback<List<Delay>> {
         if (success) {
 
             val delaysFromBackend = response!!.body()
-            val del = delaysFromBackend?.get(0)
-            Log.d(TAG, del.toString())
-        } else {
+            delaysFromBackend?.apply {
 
+                Log.d(TAG, "Fetched $size delays from backend")
+                for (delay in delaysFromBackend) {
+                    delay.save()
+                }
+            }
+        } else {
             Log.e(TAG, response?.errorBody()?.toString())
         }
     }
