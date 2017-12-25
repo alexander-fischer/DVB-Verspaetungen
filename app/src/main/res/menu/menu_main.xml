@@ -4,14 +4,6 @@
     tools:context="eu.alexanderfischer.dvbverspaetungsinfo.MainActivity">
 
     <item
-        android:id="@+id/filter"
-        android:orderInCategory="100"
-        android:title="@string/action_filter"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_filter"
-        />
-
-    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"

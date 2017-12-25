@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        DelayController.getDelays()
+        DelayController.asyncDelays()
     }
 
     private fun setupData() {
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         mSwipeLayout = findViewById(R.id.swipe_container)
         mSwipeLayout!!.setOnRefreshListener {
-            DelayController.getDelays()
+            DelayController.asyncDelays()
         }
 
         val listView = findViewById<ListView>(R.id.list)
@@ -132,9 +132,6 @@ class MainActivity : AppCompatActivity() {
         if (id == R.id.action_settings) {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
-            return true
-        } else if (id == R.id.filter) {
-            //filterTweets();
             return true
         }
 

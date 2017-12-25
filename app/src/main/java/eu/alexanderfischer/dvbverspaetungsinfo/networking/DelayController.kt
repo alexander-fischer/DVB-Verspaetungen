@@ -13,7 +13,7 @@ object DelayController : Callback<List<Delay>> {
     /**
      * Calls backend for delays async.
      */
-    fun getDelays() {
+    fun asyncDelays() {
         val delayCall = DelayApiService.create().delays()
         delayCall.enqueue(this)
     }

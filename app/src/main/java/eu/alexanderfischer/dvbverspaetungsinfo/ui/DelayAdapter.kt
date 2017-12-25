@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import eu.alexanderfischer.dvbverspaetungsinfo.R
-import eu.alexanderfischer.dvbverspaetungsinfo.helper.DateHelper
 import eu.alexanderfischer.dvbverspaetungsinfo.helper.TextHelper
 import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -27,9 +25,6 @@ class DelayAdapter(ctx: Context,
         var view = convertView
         val delay = delays[position]
 
-        val currentDate = DateHelper.getCurrentTimeAndDate()
-        val currentDayOfWeek = SimpleDateFormat("EE", Locale.ENGLISH).format(currentDate.time)
-
         if (view == null) {
             val vi = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             view = vi.inflate(layout, null)
@@ -43,7 +38,6 @@ class DelayAdapter(ctx: Context,
             holder = view.tag as ViewHolder
         }
 
-
         if (delay.text != "") {
             holder.text.text = delay.text
         } else {
@@ -51,37 +45,13 @@ class DelayAdapter(ctx: Context,
             holder.text.visibility = View.GONE
         }
 
-        val infoText = TextHelper.makeInfoText(context, delay, false)
+        val infoText = TextHelper.makeInfoText(delay)
         if (infoText != "") {
             holder.infoText.visibility = View.VISIBLE
             holder.infoText.text = infoText
         } else {
             holder.infoText.visibility = View.GONE
         }
-
-        /*
-        if (!delayInformation.getDayOfWeek().equals("")) {
-            String dayOfWeek = delayInformation.getDayOfWeek();
-
-            if (dayOfWeek.equals(mDayOfWeek)) {
-                holder.dateText.setVisibility(View.GONE);
-
-            } else {
-                if (currentDayOfWeek.equals(dayOfWeek)) {
-                    holder.dateText.setVisibility(View.VISIBLE);
-                    holder.dateText.setText("Heute");
-
-                } else {
-                    holder.dateText.setVisibility(View.VISIBLE);
-                    holder.dateText.setText(delayInformation.getDayOfWeek());
-                }
-            }
-
-            mDayOfWeek = dayOfWeek;
-        } else {
-            holder.dateText.setVisibility(View.GONE);
-        }
-        */
 
         return view!!
     }
