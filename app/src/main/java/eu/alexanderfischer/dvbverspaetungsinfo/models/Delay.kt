@@ -24,13 +24,19 @@ open class Delay(
     }
 
     companion object {
-        private fun getAll(): RealmResults<Delay> {
+        private fun allRealmDelays(): RealmResults<Delay> {
             val realm = Realm.getDefaultInstance()
             return realm.where(Delay::class.java).findAll()
         }
 
+        fun allDelays(): ArrayList<Delay> {
+            val realm = Realm.getDefaultInstance()
+            val list = realm.copyFromRealm(allRealmDelays())
+            return ArrayList(list)
+        }
+
         fun liveResults(): LiveRealmData<Delay> {
-            val delays = getAll()
+            val delays = allRealmDelays()
             return LiveRealmData(delays)
         }
     }

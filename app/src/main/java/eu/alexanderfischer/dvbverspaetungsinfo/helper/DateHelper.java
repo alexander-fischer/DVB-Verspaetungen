@@ -22,9 +22,7 @@ public class DateHelper {
      */
     public static String getActualDayOfWeek() {
         Date date = new Date();
-        String actualDayOfWeek = new SimpleDateFormat("EE", Locale.US).format(date);
-
-        return actualDayOfWeek;
+        return new SimpleDateFormat("EE", Locale.US).format(date);
     }
 
     /**
@@ -64,8 +62,7 @@ public class DateHelper {
         }
 
         DateFormat dtfmt = new SimpleDateFormat("EEE", Locale.ENGLISH);
-        String dayOfWeek = dtfmt.format(date);
-        return dayOfWeek;
+        return dtfmt.format(date);
     }
 
     /**
@@ -75,9 +72,7 @@ public class DateHelper {
      */
     public static Date getCurrentTimeAndDate() {
         Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-
-        return date;
+        return calendar.getTime();
     }
 
 }

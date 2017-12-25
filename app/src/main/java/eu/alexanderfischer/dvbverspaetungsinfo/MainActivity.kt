@@ -7,13 +7,17 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ListView
 import com.google.firebase.analytics.FirebaseAnalytics
 import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
 import eu.alexanderfischer.dvbverspaetungsinfo.services.UpdateServiceManager
+import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayAdapter
+import io.realm.Realm
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by Alexander Fischer.
@@ -25,7 +29,11 @@ class MainActivity : AppCompatActivity() {
     private val TAG = MainActivity::class.java.simpleName
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
+
     private var mSwipeLayout: SwipeRefreshLayout? = null
+
+    private var mDelays: ArrayList<Delay> = ArrayList()
+    private var mDelayAdapter: DelayAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,14 +54,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupData() {
+        mDelays = Delay.allDelays()
+
         val liveDelays = Delay.liveResults()
         liveDelays.observe(this, Observer {
-            Log.d(TAG, "New size = " + liveDelays.value?.size)
             mSwipeLayout?.apply {
-                isRefreshing = false
+                if (isRefreshing) isRefreshing = false
+            }
+
+            liveDelays.value?.apply {
+                val realm = Realm.getDefaultInstance()
+
+                val list = realm.copyFromRealm(this)
+                val observedDelays = ArrayList(list)
+                refreshAdapter(observedDelays)
             }
         })
-
     }
 
     private fun setupUi() {
@@ -61,13 +77,29 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar!!.subtitle = "HALLO"
-
 
         mSwipeLayout = findViewById(R.id.swipe_container)
         mSwipeLayout!!.setOnRefreshListener {
             DelayController.getDelays()
         }
+
+        val listView = findViewById<ListView>(R.id.list)
+        mDelayAdapter = DelayAdapter(this, mDelays)
+        listView.adapter = mDelayAdapter
+    }
+
+    private fun refreshAdapter(delays: ArrayList<Delay>) {
+        setSubtitle()
+
+        mDelays = delays
+        mDelayAdapter?.notifyDataSetChanged()
+    }
+
+    private fun setSubtitle() {
+        val date = Date()
+        val formatter = SimpleDateFormat("HH:mm", Locale.GERMAN)
+
+        supportActionBar?.subtitle = "Letzte Aktualisierung um " + formatter.format(date)
     }
 
     /**
@@ -87,7 +119,6 @@ class MainActivity : AppCompatActivity() {
             mFirebaseAnalytics!!.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle)
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater

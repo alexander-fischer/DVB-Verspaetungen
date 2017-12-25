@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.util.ArrayList;
-
-import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
+import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay;
+import io.realm.RealmList;
 
 /**
  * Created by Alexander Fischer.
@@ -15,15 +14,14 @@ import eu.alexanderfischer.dvbverspaetungsinfo.models.DelayInformation;
  */
 public class TextHelper {
 
-    public static String makeInfoText(Context context, DelayInformation delayInformation,
-                                boolean isFilterActivated) {
+    public static String makeInfoText(Context context, Delay delay, boolean isFilterActivated) {
         String infoText = "";
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         boolean hasActivatedNotificationForLine = false;
 
-        if (delayInformation.getLinien().size() > 0) {
-            switch (delayInformation.getState()) {
+        if (delay.getLinien().size() > 0) {
+            switch (delay.getState()) {
                 case "negativ":
                     infoText = "Störungsmeldung für die ";
                     break;
@@ -35,11 +33,11 @@ public class TextHelper {
                     break;
             }
 
-            ArrayList<String> linien = delayInformation.getLinien();
-            ArrayList<String> filteredLinien = new ArrayList<>();
+            RealmList<String> linien = delay.getLinien();
+            RealmList<String> filteredLinien = new RealmList<>();
 
             if (isFilterActivated) {
-                for (String linie : linien) {
+                for (String linie : delay.getLinien()) {
                     hasActivatedNotificationForLine = sharedPref.getBoolean("linie" + linie, false);
 
                     if (hasActivatedNotificationForLine) {
