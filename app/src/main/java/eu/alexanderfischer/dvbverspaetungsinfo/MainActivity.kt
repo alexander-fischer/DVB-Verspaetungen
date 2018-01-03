@@ -16,12 +16,12 @@ import eu.alexanderfischer.dvbverspaetungsinfo.models.DvbError
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
 import eu.alexanderfischer.dvbverspaetungsinfo.services.UpdateServiceManager
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayAdapter
-import io.realm.Realm
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by Alexander Fischer.
@@ -31,6 +31,7 @@ import java.util.*
  */
 class MainActivity : AppCompatActivity() {
     private val TAG = MainActivity::class.java.simpleName
+    private val AMOUNT_DELAYS = 30
 
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
 
@@ -73,7 +74,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupData() {
-        mDelays = Delay.allDelays()
+        val loadedDelays = Delay.allDelays()
+        mDelays = ArrayList(loadedDelays.subList(0, AMOUNT_DELAYS))
 
         val liveDelays = Delay.liveResults()
         liveDelays.observe(this, Observer {
@@ -82,12 +84,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             liveDelays.value?.apply {
-                val realm = Realm.getDefaultInstance()
-
-                val list = realm.copyFromRealm(this)
-                val observedDelays = ArrayList(list)
-                observedDelays.sortByDescending { it.id }
-                refreshAdapter(observedDelays)
+                val delays = Delay.getAllFromLiveResults(this)
+                val subList = ArrayList(delays.subList(0, AMOUNT_DELAYS))
+                refreshAdapter(subList)
             }
         })
     }

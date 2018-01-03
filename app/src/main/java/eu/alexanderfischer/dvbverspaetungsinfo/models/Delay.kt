@@ -1,10 +1,7 @@
 package eu.alexanderfischer.dvbverspaetungsinfo.models
 
 import com.google.gson.annotations.SerializedName
-import io.realm.Realm
-import io.realm.RealmList
-import io.realm.RealmObject
-import io.realm.RealmResults
+import io.realm.*
 import io.realm.annotations.PrimaryKey
 
 open class Delay(
@@ -26,15 +23,22 @@ open class Delay(
     companion object {
         private fun allRealmDelays(): RealmResults<Delay> {
             val realm = Realm.getDefaultInstance()
-            return realm.where(Delay::class.java).findAll()
+            val query = realm.where(Delay::class.java).sort("id", Sort.DESCENDING)
+            return query.findAll()
         }
 
         fun allDelays(): ArrayList<Delay> {
             val realm = Realm.getDefaultInstance()
             val list = realm.copyFromRealm(allRealmDelays())
-            val arrayList = ArrayList(list)
-            arrayList.sortByDescending { it.id }
-            return arrayList
+            return ArrayList(list)
+        }
+
+        fun getAllFromLiveResults(results: RealmResults<Delay>): List<Delay> {
+            val realm = Realm.getDefaultInstance()
+
+            val list = realm.copyFromRealm(results)
+            list.sortByDescending { it.id }
+            return list
         }
 
         fun liveResults(): LiveRealmData<Delay> {
