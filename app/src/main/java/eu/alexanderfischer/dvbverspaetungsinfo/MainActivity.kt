@@ -12,10 +12,14 @@ import android.view.MenuItem
 import android.widget.ListView
 import com.google.firebase.analytics.FirebaseAnalytics
 import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
+import eu.alexanderfischer.dvbverspaetungsinfo.models.DvbError
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
 import eu.alexanderfischer.dvbverspaetungsinfo.services.UpdateServiceManager
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayAdapter
 import io.realm.Realm
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -50,7 +54,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         DelayController.asyncDelays()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        EventBus.getDefault().unregister(this)
     }
 
     private fun setupData() {
@@ -67,6 +86,7 @@ class MainActivity : AppCompatActivity() {
 
                 val list = realm.copyFromRealm(this)
                 val observedDelays = ArrayList(list)
+                observedDelays.sortByDescending { it.id }
                 refreshAdapter(observedDelays)
             }
         })
@@ -100,6 +120,10 @@ class MainActivity : AppCompatActivity() {
         val formatter = SimpleDateFormat("HH:mm", Locale.GERMAN)
 
         supportActionBar?.subtitle = "Letzte Aktualisierung um " + formatter.format(date)
+    }
+
+    private fun setErrorSubtitle(message: String) {
+        supportActionBar?.subtitle = message
     }
 
     /**
@@ -163,6 +187,17 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
 
         return sharedPref.getBoolean("hasConfiguredSettings", false)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(error: DvbError) {
+        mSwipeLayout?.isRefreshing = false
+
+        if (error.message != null) {
+            setErrorSubtitle(error.message)
+        } else {
+            setErrorSubtitle(getString(R.string.std_err_msg))
+        }
     }
 }
 

@@ -65,6 +65,7 @@ public class UpdateTweetsService extends Service {
     }
 
 
+    // TODO Notifications
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void sendNotification(DelayInformation tweet) {
         if (tweet.getLinien().size() > 0) {

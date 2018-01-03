@@ -32,7 +32,9 @@ open class Delay(
         fun allDelays(): ArrayList<Delay> {
             val realm = Realm.getDefaultInstance()
             val list = realm.copyFromRealm(allRealmDelays())
-            return ArrayList(list)
+            val arrayList = ArrayList(list)
+            arrayList.sortByDescending { it.id }
+            return arrayList
         }
 
         fun liveResults(): LiveRealmData<Delay> {

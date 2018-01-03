@@ -12,4 +12,6 @@
     <string name="di_url">http://alexfi.dubhe.uberspace.de/text.json</string>
     <string name="lastid_url">http://alexfi.dubhe.uberspace.de/id.txt</string>
 
+    <string name="std_err_msg">Keine Verbindung möglich</string>
+
 </resources>
