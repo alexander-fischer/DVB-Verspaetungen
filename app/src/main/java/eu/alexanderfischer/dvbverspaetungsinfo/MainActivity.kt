@@ -17,7 +17,6 @@ import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
 import eu.alexanderfischer.dvbverspaetungsinfo.models.DvbError
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
 import eu.alexanderfischer.dvbverspaetungsinfo.services.UpdateServiceManager
-import eu.alexanderfischer.dvbverspaetungsinfo.testing.UiTestingHelper
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayAdapter
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -56,8 +55,6 @@ class MainActivity : AppCompatActivity() {
 
         setupData()
         setupUi()
-
-        UiTestingHelper(this)
     }
 
     override fun onResume() {
