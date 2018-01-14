@@ -76,7 +76,6 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
-    // TODO Longpress share
     private fun setupData() {
         val loadedDelays = Delay.allDelays()
         mDelays = if (loadedDelays.size > AMOUNT_DELAYS) {
