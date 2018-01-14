@@ -1,6 +1,7 @@
 package eu.alexanderfischer.dvbverspaetungsinfo.ui
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,9 @@ import java.util.*
  * Implementation of an ArrayAdapter.
  */
 class DelayAdapter(ctx: Context,
-                   private val delays: ArrayList<Delay>) :
+                   private var delays: ArrayList<Delay>) :
         ArrayAdapter<Delay>(ctx, R.layout.list_layout, delays) {
+    private val TAG = DelayAdapter::class.java.simpleName
 
     private val layout = R.layout.list_layout
 
@@ -63,5 +65,12 @@ class DelayAdapter(ctx: Context,
         lateinit var text: TextView
         lateinit var infoText: TextView
         lateinit var dateText: TextView
+    }
+
+    fun refreshData(delays: ArrayList<Delay>) {
+        Log.d(TAG, "refreshData, delays: ${delays.size}")
+
+        this.delays = delays
+        notifyDataSetChanged()
     }
 }

@@ -1,5 +1,7 @@
 package eu.alexanderfischer.dvbverspaetungsinfo.networking
 
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -22,12 +24,19 @@ interface DelayApiService {
                     .build()
 
             val retrofit = Retrofit.Builder()
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(getGsonConverter())
                     .baseUrl(URL)
                     .client(client)
                     .build()
 
             return retrofit.create(DelayApiService::class.java)
+        }
+
+        fun getGsonConverter(): GsonConverterFactory {
+            val gson = GsonBuilder()
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .create()
+            return GsonConverterFactory.create(gson)
         }
     }
 

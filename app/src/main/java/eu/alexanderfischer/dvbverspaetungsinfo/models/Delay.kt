@@ -6,9 +6,10 @@ import io.realm.annotations.PrimaryKey
 
 open class Delay(
         @PrimaryKey var id: String = "0",
-        @SerializedName("created_at") var createdAt: String = "",
+        var createdAt: String = "",
         var text: String = "",
         var state: String = "",
+        @SerializedName("dayOfWeek")
         var dayOfWeek: String = "",
         var linien: RealmList<String> = RealmList()) : RealmObject() {
 

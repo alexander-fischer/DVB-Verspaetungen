@@ -75,7 +75,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupData() {
         val loadedDelays = Delay.allDelays()
-        mDelays = ArrayList(loadedDelays.subList(0, AMOUNT_DELAYS))
+        mDelays = if (loadedDelays.size > AMOUNT_DELAYS) {
+            ArrayList(loadedDelays.subList(0, AMOUNT_DELAYS))
+        } else {
+            ArrayList(loadedDelays)
+        }
 
         val liveDelays = Delay.liveResults()
         liveDelays.observe(this, Observer {
@@ -84,9 +88,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             liveDelays.value?.apply {
-                val delays = Delay.getAllFromLiveResults(this)
-                val subList = ArrayList(delays.subList(0, AMOUNT_DELAYS))
-                refreshAdapter(subList)
+                var delays = Delay.getAllFromLiveResults(this)
+
+                if (delays.size > AMOUNT_DELAYS) {
+                    delays = delays.subList(0, AMOUNT_DELAYS)
+                }
+
+                refreshAdapter(ArrayList(delays))
             }
         })
     }
@@ -111,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         setSubtitle()
 
         mDelays = delays
-        mDelayAdapter?.notifyDataSetChanged()
+        mDelayAdapter?.refreshData(mDelays)
     }
 
     private fun setSubtitle() {
