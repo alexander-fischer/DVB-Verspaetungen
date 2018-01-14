@@ -9,8 +9,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.AdapterView
 import android.widget.ListView
 import com.google.firebase.analytics.FirebaseAnalytics
+import eu.alexanderfischer.dvbverspaetungsinfo.helper.TextHelper
 import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
 import eu.alexanderfischer.dvbverspaetungsinfo.models.DvbError
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
@@ -22,6 +24,7 @@ import org.greenrobot.eventbus.ThreadMode
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 /**
  * Created by Alexander Fischer.
@@ -73,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
+    // TODO Longpress share
     private fun setupData() {
         val loadedDelays = Delay.allDelays()
         mDelays = if (loadedDelays.size > AMOUNT_DELAYS) {
@@ -113,6 +117,10 @@ class MainActivity : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.list)
         mDelayAdapter = DelayAdapter(this, mDelays)
         listView.adapter = mDelayAdapter
+
+        // Long click sharing functionality.
+        listView.isLongClickable = true
+        listView.onItemLongClickListener = delayLongClickListener
     }
 
     private fun refreshAdapter(delays: ArrayList<Delay>) {
@@ -194,6 +202,27 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
 
         return sharedPref.getBoolean("hasConfiguredSettings", false)
+    }
+
+    private val delayLongClickListener = AdapterView.OnItemLongClickListener { _, _, pos, _ ->
+        val delay = mDelays[pos]
+        val infoText = TextHelper.makeInfoText(delay)
+
+        val sendText = if (infoText == "") {
+            delay.text + " #DVBVerspätungen"
+        } else {
+            infoText + " " + delay.text + " #DVBVerspätungen"
+        }
+
+        val sendIntent = Intent()
+
+        sendIntent.action = Intent.ACTION_SEND
+        sendIntent.putExtra(Intent.EXTRA_TEXT, sendText)
+        sendIntent.type = "text/plain"
+
+        startActivity(Intent.createChooser(sendIntent, "Information senden an:"))
+
+        true
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
