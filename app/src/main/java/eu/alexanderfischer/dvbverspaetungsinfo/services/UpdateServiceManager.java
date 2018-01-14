@@ -23,7 +23,7 @@ public class UpdateServiceManager {
                 PendingIntent.getService(context, 0, uTServiceIntent, 0);
 
         // every 5 minutes because of battery saving.
-        long interval = DateUtils.MINUTE_IN_MILLIS * 5;
+        long interval = DateUtils.MINUTE_IN_MILLIS * 1;
 
         long firstStart = System.currentTimeMillis() + 10000L;
 

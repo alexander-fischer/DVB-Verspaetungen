@@ -13,6 +13,14 @@ object DelayController : Callback<List<Delay>> {
     private val TAG = DelayController::class.java.simpleName!!
 
     /**
+     * Calls backend for delays sync.
+     */
+    fun syncDelays(): Response<List<Delay>> {
+        val delayCall = DelayApiService.create().delays()
+        return delayCall.execute()
+    }
+
+    /**
      * Calls backend for delays async.
      */
     fun asyncDelays() {
