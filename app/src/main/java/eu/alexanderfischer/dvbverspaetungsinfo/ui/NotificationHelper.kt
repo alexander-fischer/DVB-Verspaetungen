@@ -26,17 +26,6 @@ class NotificationHelper(private val mContext: Context) : ContextWrapper(mContex
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     fun sendNotification(delay: Delay) {
-        sendNotificationNew(delay)
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            sendNotificationNew(delay)
-        } else {
-            sendNotificationOld(delay)
-        }*/
-    }
-
-    private fun sendNotificationNew(delay: Delay) {
-        val channelId = getChannel()
         for (line in delay.linien) {
 
             if (hasEnabledNotificationFor(line)) {
@@ -45,51 +34,20 @@ class NotificationHelper(private val mContext: Context) : ContextWrapper(mContex
                 val intent = createPendingIntent()
 
                 val builder = NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_NAME)
-                        .setChannelId(channelId)
                         .setContentText(content)
                         .setContentTitle(title)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentIntent(intent)
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val channelId = getChannel()
+                    builder.setChannelId(channelId)
+                }
+
                 val notification = builder.build()
                 mNotificationManager.notify(getRandomId(), notification)
             }
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private fun sendNotificationOld(delay: Delay) {
-        for (linie in delay.linien) {
-
-            if (hasEnabledNotificationFor(linie)) {
-
-                val mBuilder = NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle("Hinweis")
-                        .setContentText("Für Linie $linie liegt ein neuer Hinweis vor.")
-                        .setAutoCancel(true)
-
-
-                val resultIntent = Intent(mContext, MainActivity::class.java)
-
-                val stackBuilder = TaskStackBuilder.create(mContext)
-                stackBuilder.addParentStack(MainActivity::class.java)
-                stackBuilder.addNextIntent(resultIntent)
-
-                val resultPendingIntent = stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                )
-
-                mBuilder.setContentIntent(resultPendingIntent)
-
-                val mNotificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE)
-                        as NotificationManager
-
-                mNotificationManager.notify(getRandomId(), mBuilder.build())
-            }
-        }
-
     }
 
     @TargetApi(Build.VERSION_CODES.O)
