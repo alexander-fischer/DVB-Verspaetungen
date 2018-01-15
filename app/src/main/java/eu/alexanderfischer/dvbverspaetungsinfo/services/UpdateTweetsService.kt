@@ -22,12 +22,12 @@ class UpdateTweetsService : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         doAsync {
             val delaysFromDb = Delay.allDelays()
-            val latestIdFromDb = delaysFromDb[0].id
+            val latestIdFromDb = delaysFromDb[0].id.toLong()
 
             val res = DelayController.syncDelays()
             if (res.isSuccessful) {
                 res.body()?.apply {
-                    this.filter { it.id > latestIdFromDb }
+                    this.filter { it.id.toLong() > latestIdFromDb }
                             .forEach { sendNotification(it) }
                 }
             }

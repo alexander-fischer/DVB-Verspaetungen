@@ -12,6 +12,7 @@ import android.text.format.DateUtils
  * Class for handling background jobs for the app.
  */
 object UpdateServiceManager {
+    private val TAG = UpdateServiceManager::class.java.simpleName
 
     /**
      * Starts the service to request data in a background job. Is started every time because the
