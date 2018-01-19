@@ -24,12 +24,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.UpdateTweetsService">
-            <intent-filter>
-                <action android:name="eu.alexanderfischer.dvbverspaetungsinfo.MainActivity" />
-            </intent-filter>
-        </service>
-
         <receiver android:name=".services.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

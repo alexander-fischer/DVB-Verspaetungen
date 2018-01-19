@@ -24,7 +24,6 @@ class NotifyJobService : JobService() {
     }
 
     private fun doSampleJob(params: JobParameters) {
-        Log.e(TAG, "doSampleJob")
 
         doAsync {
             val delaysFromDb = Delay.allDelays()
@@ -35,7 +34,7 @@ class NotifyJobService : JobService() {
             if (res.isSuccessful) {
                 res.body()?.apply {
                     this.filter {
-                        it.id.toLong() > 0
+                        it.id.toLong() > latestIdFromDb
                     }.forEach {
                         sendNotification(it)
                     }

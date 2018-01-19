@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //UpdateServiceManager.startUpdateService(this)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         startTutorial()
@@ -58,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         setupData()
         setupUi()
 
+        setupServices()
+    }
+
+    private fun setupServices() {
         NotifyJobScheduler.scheduleJob(this)
 
         val filter = IntentFilter(Intent.ACTION_BOOT_COMPLETED)

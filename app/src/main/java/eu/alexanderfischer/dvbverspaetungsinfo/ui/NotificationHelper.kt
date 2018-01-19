@@ -15,9 +15,6 @@ import java.util.*
 
 class NotificationHelper(private val mContext: Context) : ContextWrapper(mContext) {
 
-    private val NOTIFICATION_DELAY = "40"
-    private val NOTIFICATION_CHANNEL_NAME = "Notification Channel"
-
     private val mNotificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -29,40 +26,16 @@ class NotificationHelper(private val mContext: Context) : ContextWrapper(mContex
                 val title = createTitle(delay)
                 val intent = createPendingIntent()
 
-                val builder = NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_NAME)
+                val builder = NotificationCompat.Builder(mContext)
                         .setContentText(content)
                         .setContentTitle(title)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentIntent(intent)
 
-                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val channelId = getChannel()
-                    builder.setChannelId(channelId)
-                }*/
-
                 val notification = builder.build()
                 mNotificationManager.notify(getRandomId(), notification)
             }
         }
-    }
-
-    //@TargetApi(Build.VERSION_CODES.O)
-    private fun getChannel(): String {
-        /*val channelId = NOTIFICATION_DELAY
-
-        val channel = if (mNotificationManager.getNotificationChannel(channelId) != null) {
-            mNotificationManager.getNotificationChannel(channelId)
-        } else {
-            NotificationChannel(channelId, NOTIFICATION_CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_HIGH)
-        }
-
-        channel.enableLights(true)
-        channel.lightColor = Color.YELLOW
-
-        mNotificationManager.createNotificationChannel(channel)*/
-
-        return ""
     }
 
     private fun createContent(delay: Delay, line: String): String {
