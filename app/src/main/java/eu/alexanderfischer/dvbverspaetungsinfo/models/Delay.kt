@@ -22,16 +22,27 @@ open class Delay(
     }
 
     companion object {
-        private fun allRealmDelays(): RealmResults<Delay> {
-            val realm = Realm.getDefaultInstance()
-            val query = realm.where(Delay::class.java).sort("id", Sort.DESCENDING)
-            return query.findAll()
-        }
-
         fun allDelays(): ArrayList<Delay> {
             val realm = Realm.getDefaultInstance()
-            val list = realm.copyFromRealm(allRealmDelays())
+            val query = realm.where(Delay::class.java).sort("id", Sort.DESCENDING)
+            val list = realm.copyFromRealm(query.findAll())
             return ArrayList(list)
+        }
+
+        fun getLast30(): ArrayList<Delay> {
+            val realm = Realm.getDefaultInstance()
+            val query = realm.where(Delay::class.java).sort("id", Sort.DESCENDING)
+            val delayRefs = query.findAll()
+
+            val delayRefsLimit = if (delayRefs.size > 30) {
+                delayRefs.subList(0, 30)
+            } else {
+                delayRefs
+            }
+
+            val delays = realm.copyFromRealm(delayRefsLimit)
+
+            return ArrayList(delays)
         }
 
         fun getAllFromLiveResults(results: RealmResults<Delay>): List<Delay> {
@@ -43,7 +54,9 @@ open class Delay(
         }
 
         fun liveResults(): LiveRealmData<Delay> {
-            val delays = allRealmDelays()
+            val realm = Realm.getDefaultInstance()
+            val query = realm.where(Delay::class.java).sort("id", Sort.DESCENDING)
+            val delays = query.findAll()
             return LiveRealmData(delays)
         }
     }

@@ -1,15 +1,11 @@
 package eu.alexanderfischer.dvbverspaetungsinfo.ui
 
-import android.annotation.TargetApi
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import eu.alexanderfischer.dvbverspaetungsinfo.MainActivity
@@ -39,10 +35,10 @@ class NotificationHelper(private val mContext: Context) : ContextWrapper(mContex
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentIntent(intent)
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     val channelId = getChannel()
                     builder.setChannelId(channelId)
-                }
+                }*/
 
                 val notification = builder.build()
                 mNotificationManager.notify(getRandomId(), notification)
@@ -50,9 +46,9 @@ class NotificationHelper(private val mContext: Context) : ContextWrapper(mContex
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
+    //@TargetApi(Build.VERSION_CODES.O)
     private fun getChannel(): String {
-        val channelId = NOTIFICATION_DELAY
+        /*val channelId = NOTIFICATION_DELAY
 
         val channel = if (mNotificationManager.getNotificationChannel(channelId) != null) {
             mNotificationManager.getNotificationChannel(channelId)
@@ -64,9 +60,9 @@ class NotificationHelper(private val mContext: Context) : ContextWrapper(mContex
         channel.enableLights(true)
         channel.lightColor = Color.YELLOW
 
-        mNotificationManager.createNotificationChannel(channel)
+        mNotificationManager.createNotificationChannel(channel)*/
 
-        return channelId
+        return ""
     }
 
     private fun createContent(delay: Delay, line: String): String {

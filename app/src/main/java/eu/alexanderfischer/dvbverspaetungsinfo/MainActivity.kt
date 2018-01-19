@@ -3,6 +3,7 @@ package eu.alexanderfischer.dvbverspaetungsinfo
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -16,7 +17,7 @@ import eu.alexanderfischer.dvbverspaetungsinfo.helper.TextHelper
 import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
 import eu.alexanderfischer.dvbverspaetungsinfo.models.DvbError
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
-import eu.alexanderfischer.dvbverspaetungsinfo.services.UpdateServiceManager
+import eu.alexanderfischer.dvbverspaetungsinfo.services.BootReceiver
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayAdapter
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -48,13 +49,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        UpdateServiceManager.startUpdateService(this)
+        //UpdateServiceManager.startUpdateService(this)
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         startTutorial()
 
         setupData()
         setupUi()
+
+        val filter = IntentFilter(Intent.ACTION_BOOT_COMPLETED)
+        registerReceiver(BootReceiver(), filter)
     }
 
     override fun onResume() {
@@ -78,12 +82,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupData() {
-        val loadedDelays = Delay.allDelays()
-        mDelays = if (loadedDelays.size > AMOUNT_DELAYS) {
-            ArrayList(loadedDelays.subList(0, AMOUNT_DELAYS))
-        } else {
-            ArrayList(loadedDelays)
-        }
+        mDelays = Delay.getLast30()
 
         val liveDelays = Delay.liveResults()
         liveDelays.observe(this, Observer {
@@ -106,15 +105,15 @@ class MainActivity : AppCompatActivity() {
     private fun setupUi() {
         title = getString(R.string.app_name)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        mSwipeLayout = findViewById(R.id.swipe_container)
+        mSwipeLayout = findViewById(R.id.swipe_container) as SwipeRefreshLayout
         mSwipeLayout!!.setOnRefreshListener {
             DelayController.asyncDelays()
         }
 
-        val listView = findViewById<ListView>(R.id.list)
+        val listView = findViewById(R.id.list) as ListView
         mDelayAdapter = DelayAdapter(this, mDelays)
         listView.adapter = mDelayAdapter
 

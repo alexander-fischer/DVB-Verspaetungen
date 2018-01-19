@@ -31,9 +31,9 @@ class DelayAdapter(ctx: Context,
             val vi = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             view = vi.inflate(layout, null)
 
-            holder.text = view.findViewById<View>(R.id.list_layout_textview) as TextView
-            holder.infoText = view.findViewById<View>(R.id.list_layout_infos) as TextView
-            holder.dateText = view.findViewById<View>(R.id.list_layout_date) as TextView
+            holder.text = view.findViewById(R.id.list_layout_textview) as TextView
+            holder.infoText = view.findViewById(R.id.list_layout_infos) as TextView
+            holder.dateText = view.findViewById(R.id.list_layout_date) as TextView
             view.tag = holder
 
         } else {
