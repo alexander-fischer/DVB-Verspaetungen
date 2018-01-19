@@ -18,6 +18,7 @@ import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
 import eu.alexanderfischer.dvbverspaetungsinfo.models.DvbError
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
 import eu.alexanderfischer.dvbverspaetungsinfo.services.BootReceiver
+import eu.alexanderfischer.dvbverspaetungsinfo.services.NotifyJobScheduler
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.DelayAdapter
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -56,6 +57,8 @@ class MainActivity : AppCompatActivity() {
 
         setupData()
         setupUi()
+
+        NotifyJobScheduler.scheduleJob(this)
 
         val filter = IntentFilter(Intent.ACTION_BOOT_COMPLETED)
         registerReceiver(BootReceiver(), filter)
