@@ -31,6 +31,7 @@ class NotificationHelper(private val mContext: Context) : ContextWrapper(mContex
                         .setContentTitle(title)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentIntent(intent)
+                        .setAutoCancel(true)
 
                 val notification = builder.build()
                 mNotificationManager.notify(getRandomId(), notification)

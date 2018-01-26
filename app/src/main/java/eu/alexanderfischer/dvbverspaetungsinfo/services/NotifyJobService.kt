@@ -3,7 +3,6 @@ package eu.alexanderfischer.dvbverspaetungsinfo.services
 import android.app.job.JobParameters
 import android.app.job.JobService
 import android.preference.PreferenceManager
-import android.util.Log
 import eu.alexanderfischer.dvbverspaetungsinfo.models.Delay
 import eu.alexanderfischer.dvbverspaetungsinfo.networking.DelayController
 import eu.alexanderfischer.dvbverspaetungsinfo.ui.NotificationHelper
@@ -14,7 +13,7 @@ class NotifyJobService : JobService() {
     val TAG = NotifyJobService::class.java.simpleName
 
     override fun onStartJob(params: JobParameters): Boolean {
-        doSampleJob(params)
+        startNotifyJob(params)
 
         return true
     }
@@ -23,7 +22,7 @@ class NotifyJobService : JobService() {
         return true
     }
 
-    private fun doSampleJob(params: JobParameters) {
+    private fun startNotifyJob(params: JobParameters) {
 
         doAsync {
             val delaysFromDb = Delay.allDelays()
@@ -36,6 +35,7 @@ class NotifyJobService : JobService() {
                     this.filter {
                         it.id.toLong() > latestIdFromDb
                     }.forEach {
+                        it.save()
                         sendNotification(it)
                     }
                 }
@@ -48,7 +48,6 @@ class NotifyJobService : JobService() {
     }
 
     private fun sendNotification(delay: Delay) {
-        Log.e(TAG, "sendNotification")
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val hasActivatedNotifications = sharedPref.getBoolean("notifications", false)
 
@@ -59,7 +58,6 @@ class NotifyJobService : JobService() {
     }
 
     private fun scheduleRefresh() {
-        Log.e(TAG, "scheduleRefresh")
         NotifyJobScheduler.scheduleJob(applicationContext)
     }
 
